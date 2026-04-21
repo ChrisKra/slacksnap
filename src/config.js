@@ -6,6 +6,7 @@ const DEFAULT_CONFIG = {
   fileNameFormat: "YYYYMMDD-HHmm-{channel}.md",
   includeTimestamps: true,
   includeThreadReplies: true,
+  includeFiles: true,
   historyDays: 7,
 
   // Batch export configuration

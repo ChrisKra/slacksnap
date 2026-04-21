@@ -594,6 +594,15 @@ function convertToMarkdown(messages, channelName, config) {
     if (message.content) {
       markdown += `${message.content}\n\n`;
     }
+	
+	
+	// ✅ Add file URLs (if any) right after the corresponding message content
+	if (config.includeFiles && Array.isArray(message.fileUrls) && message.fileUrls.length > 0) {
+	for (const url of message.fileUrls) {
+			markdown += `**File URL:** ${url}\n\n`;
+		}
+	}
+
     
     // Add thread replies if enabled
     if (config.includeThreadReplies && message.threadReplies.length > 0) {
@@ -605,6 +614,11 @@ function convertToMarkdown(messages, channelName, config) {
         if (reply.content) {
           markdown += `${reply.content}\n`;
         }
+		if (config.includeFiles && Array.isArray(reply.fileUrls) && reply.fileUrls.length > 0) {
+		  for (const url of reply.fileUrls) {
+			markdown += `  • **File URL:** ${url}\n`;
+		  }
+		}
       }
       markdown += `\n`;
     }
@@ -808,27 +822,55 @@ async function exportChannelViaAPI(channelId, channelName, oldestTimestamp = nul
   console.log(`🎯 Need to fetch ${userIds.size} users for ${channelName}`);
   const userMap = await fetchSpecificUsers(Array.from(userIds), token);
 
-  // Enrich messages with usernames and thread replies
-  const enrichedMessages = [];
-  for (const apiMsg of apiMessages) {
-    const sender = userMap[apiMsg.user] || 'Unknown User';
-    let content = window.SlackSnapUtils.cleanText(apiMsg.text || '');
-    content = content.replace(/<@([A-Z0-9]+)>/g, (_, id) => '@' + (userMap[id] || 'unknown'));
+  // Enrich messages with usernames, file URLs, and thread replies
+	const enrichedMessages = [];
+	for (const apiMsg of apiMessages) {
+	  const sender = userMap[apiMsg.user] || 'Unknown User';
 
-    const threadReplies = [];
-    if (config.includeThreadReplies && apiMsg.thread_ts && apiMsg.reply_count > 0) {
-      const repliesRaw = threadRepliesCache.get(apiMsg.thread_ts) || [];
-      for (const reply of repliesRaw) {
-        if (reply.ts === apiMsg.thread_ts) continue;
-        const replySender = userMap[reply.user] || 'Unknown User';
-        let replyContent = window.SlackSnapUtils.cleanText(reply.text || '');
-        replyContent = replyContent.replace(/<@([A-Z0-9]+)>/g, (_, id) => '@' + (userMap[id] || 'unknown'));
-        threadReplies.push({ sender: replySender, content: replyContent, timestamp: reply.ts });
-      }
-    }
+	  let content = window.SlackSnapUtils.cleanText(apiMsg.text || '');
+	  content = content.replace(/\<@([A-Z0-9]+)\>/g, (_, id) => '@' + (userMap[id] || 'unknown'));
 
-    enrichedMessages.push({ sender, content, timestamp: apiMsg.ts, threadReplies });
-  }
+	  // ✅ Extract file URLs (url_private) from the main message
+	  const fileUrls = Array.isArray(apiMsg.files)
+		? apiMsg.files
+			.map(f => f && f.url_private)
+			.filter(Boolean)
+		: [];
+
+	  const threadReplies = [];
+	  if (config.includeThreadReplies && apiMsg.thread_ts && apiMsg.reply_count > 0) {
+		const repliesRaw = threadRepliesCache.get(apiMsg.thread_ts) || [];
+		for (const reply of repliesRaw) {
+		  if (reply.ts === apiMsg.thread_ts) continue;
+
+		  const replySender = userMap[reply.user] || 'Unknown User';
+		  let replyContent = window.SlackSnapUtils.cleanText(reply.text || '');
+		  replyContent = replyContent.replace(/\<@([A-Z0-9]+)\>/g, (_, id) => '@' + (userMap[id] || 'unknown'));
+
+		  // ✅ Extract file URLs from the reply
+		  const replyFileUrls = Array.isArray(reply.files)
+			? reply.files
+				.map(f => f && f.url_private)
+				.filter(Boolean)
+			: [];
+
+		  threadReplies.push({
+			sender: replySender,
+			content: replyContent,
+			timestamp: reply.ts,
+			fileUrls: replyFileUrls
+		  });
+		}
+	  }
+
+	  enrichedMessages.push({
+		sender,
+		content,
+		timestamp: apiMsg.ts,
+		fileUrls,
+		threadReplies
+	  });
+	}
 
   const messages = enrichedMessages
     .filter(msg => msg.content && msg.content.trim())

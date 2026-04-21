@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('fileNameFormat').value = config.fileNameFormat;
         document.getElementById('includeTimestamps').checked = config.includeTimestamps;
         document.getElementById('includeThreadReplies').checked = config.includeThreadReplies;
+		document.getElementById('includeFiles').checked = config.includeFiles;
         document.getElementById('historyDays').value = config.historyDays;
 
         // Populate channel JSON editor
@@ -52,6 +53,7 @@ form.addEventListener('submit', async (e) => {
             fileNameFormat: formData.get('fileNameFormat') || 'YYYYMMDD-HHmm-{channel}.md',
             includeTimestamps: document.getElementById('includeTimestamps').checked,
             includeThreadReplies: document.getElementById('includeThreadReplies').checked,
+			includeFiles: document.getElementById('includeFiles').checked,
             historyDays: parseInt(document.getElementById('historyDays').value) || 7
         };
         
@@ -76,6 +78,7 @@ resetBtn.addEventListener('click', async () => {
         document.getElementById('fileNameFormat').value = defaultConfig.fileNameFormat;
         document.getElementById('includeTimestamps').checked = defaultConfig.includeTimestamps;
         document.getElementById('includeThreadReplies').checked = defaultConfig.includeThreadReplies;
+		document.getElementById('includeFiles').checked = defaultConfig.includeFiles;
         document.getElementById('historyDays').value = defaultConfig.historyDays;
         
         // Save defaults (only general settings, preserve channels)
@@ -84,6 +87,7 @@ resetBtn.addEventListener('click', async () => {
             fileNameFormat: defaultConfig.fileNameFormat,
             includeTimestamps: defaultConfig.includeTimestamps,
             includeThreadReplies: defaultConfig.includeThreadReplies,
+			includeFiles: defaultConfig.includeFiles,
             historyDays: defaultConfig.historyDays
         });
         showStatus('Settings reset to defaults', 'success');

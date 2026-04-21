@@ -247,7 +247,9 @@ async function exportSelected() {
         action: 'BATCH_EXPORT_CHANNEL',
         channelId: channel.channelId,
         channelName: channel.name,
-        oldestTimestamp: lastExportTimestamps[channel.channelId] || null
+		// Always load all messages, not only new
+        //oldestTimestamp: lastExportTimestamps[channel.channelId] || null 
+		oldestTimestamp: null
       });
 
       if (response && response.success) {

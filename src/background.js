@@ -178,6 +178,7 @@ chrome.runtime.onInstalled.addListener((details) => {
       fileNameFormat: "YYYYMMDD-HHmm-{channel}.md",
       includeTimestamps: true,
       includeThreadReplies: true,
+	  includeFiles: true,
       historyDays: 7,
       channels: [],
       lastExportTimestamps: {},
