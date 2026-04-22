@@ -275,7 +275,8 @@ async function exportSelected() {
             for (const url of response.fileUrls) {
               const urlParts = url.split('/');
               const rawName = urlParts[urlParts.length - 1].split('?')[0];
-              const safeName = rawName.replace(/[<>:"/\\|?*]/g, '_') || 'file';
+              const prefix = urlParts[urlParts.length - 2].split('-')[1];
+              const safeName = prefix + "_" + rawName.replace(/[<>:"/\\|?*]/g, '_') || 'file';
               console.log("Requested download: ", url)
               await chrome.runtime.sendMessage({
                 action: 'DOWNLOAD_SLACK_FILE',
