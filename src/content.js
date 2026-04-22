@@ -612,7 +612,7 @@ function convertToMarkdown(messages, channelName, config) {
       const dirName = config.fileNameFormat.replace('YYYYMMDD-HHmm', dateStr).replace('{channel}', cleanChannel);
 
       markdown += `![${safeName}](./${dirName.replace(/\.md$/, '')}/${safeName})\n`;
-      markdown += `**File URL:** ${url}\n\n`;
+      markdown += `**Slack File URL:** ${url}\n\n`;
 		}
 	}
 
@@ -629,7 +629,6 @@ function convertToMarkdown(messages, channelName, config) {
         }
 		if (config.includeFiles && Array.isArray(reply.fileUrls) && reply.fileUrls.length > 0) {
 		  for (const url of reply.fileUrls) {
-			markdown += `  • **File URL:** ${url}\n`;
         // Generate Filename
         const urlParts = url.split('/');
         const rawName = urlParts[urlParts.length - 1].split('?')[0];
@@ -643,7 +642,7 @@ function convertToMarkdown(messages, channelName, config) {
         const dirName = config.fileNameFormat.replace('YYYYMMDD-HHmm', dateStr).replace('{channel}', cleanChannel);
 
         markdown += `    ![${safeName}](./${dirName.replace(/\.md$/, '')}/${safeName})\n`;
-        markdown += `  • **File URL:** ${url}\n\n`;
+        markdown += `  • **Slack File URL:** ${url}\n\n`;
 		  }
 		}
       }
