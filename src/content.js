@@ -787,6 +787,9 @@ async function exportChannelViaAPI(channelId, channelName, oldestTimestamp = nul
   const userIds = new Set();
   const threadRepliesCache = new Map();
   let threadFetchCount = 0;
+
+  // Compute totalThreadCount to show progress
+  const totalThreadCount = apiMessages.filter(m => m.thread_ts && m.reply_count > 0).length;
   
   for (const msg of apiMessages) {
     if (msg.user) userIds.add(msg.user);
@@ -803,6 +806,8 @@ async function exportChannelViaAPI(channelId, channelName, oldestTimestamp = nul
         await new Promise(resolve => setTimeout(resolve, 800)); // 800ms delay between thread fetches
       }
       threadFetchCount++;
+
+      console.log("fetched: ", threadFetchCount, "total: ", totalThreadCount)
       
       const repliesRaw = await fetchThreadReplies(channelId, msg.thread_ts, oldestUnix, token);
       threadRepliesCache.set(msg.thread_ts, repliesRaw);
