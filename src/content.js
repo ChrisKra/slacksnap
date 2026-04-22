@@ -600,6 +600,21 @@ function convertToMarkdown(messages, channelName, config) {
 	if (config.includeFiles && Array.isArray(message.fileUrls) && message.fileUrls.length > 0) {
 	for (const url of message.fileUrls) {
 			markdown += `**File URL:** ${url}\n\n`;
+
+      // Generate Filename
+      const urlParts = url.split('/');
+      const rawName = urlParts[urlParts.length - 1].split('?')[0];
+      const prefix = urlParts[urlParts.length - 2].split('-')[1];
+      const safeName = prefix + "_" + rawName.replace(/[<>:"/\\|?*]/g, '_') || 'file';
+
+      const now = new Date();
+      const dateStr = formatDate(now, 'YYYYMMDD-HHmm');
+      const cleanChannel = channelName.replace(/[^a-zA-Z0-9-_]/g, '-');
+      
+      const fileName = config.fileNameFormat.replace('YYYYMMDD-HHmm', dateStr).replace('{channel}', cleanChannel);
+
+      markdown += `(![${safeName}](./${fileName.replace(/\.md$/, '')}/${safeName}))`;
+
 		}
 	}
 

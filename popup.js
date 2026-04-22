@@ -259,13 +259,15 @@ async function exportSelected() {
 		    oldestTimestamp: null
       });
 
+      const fileName = generateFilename(channel.name);
+
       if (response && response.success) {
         if (response.messageCount > 0) {
           // Trigger download via background script
           await chrome.runtime.sendMessage({
             action: 'DOWNLOAD_FILE',
             data: {
-              filename: generateFilename(channel.name),
+              filename: fileName,
               content: response.markdown,
               directory: config.downloadDirectory || 'slack-exports'
             }
@@ -275,12 +277,13 @@ async function exportSelected() {
             for (const url of response.fileUrls) {
               const urlParts = url.split('/');
               const rawName = urlParts[urlParts.length - 1].split('?')[0];
-              const safeName = rawName.replace(/[<>:"/\\|?*]/g, '_') || 'file';
+              const prefix = urlParts[urlParts.length - 2].split('-')[1];
+              const safeName = prefix + "_" + rawName.replace(/[<>:"/\\|?*]/g, '_') || 'file';
               console.log("Requested download: ", url)
               await chrome.runtime.sendMessage({
                 action: 'DOWNLOAD_SLACK_FILE',
                 url: url,
-                filename: `${config.downloadDirectory || 'slack-exports'}/${generateFilename(channel.name).replace(/\.md$/, '')}/${safeName}`
+                filename: `${config.downloadDirectory || 'slack-exports'}/${fileName.replace(/\.md$/, '')}/${safeName}`
               });
               await sleep(300); // small delay to avoid hammering the CDN
             }
