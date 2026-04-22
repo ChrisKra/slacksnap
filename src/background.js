@@ -106,7 +106,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       {
         url: message.url,
         filename: message.filename,
-        conflictAction: 'overwrite',
+        conflictAction: 'uniquify',
         saveAs: false
       },
       (downloadId) => {
