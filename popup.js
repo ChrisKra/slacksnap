@@ -280,7 +280,7 @@ async function exportSelected() {
               await chrome.runtime.sendMessage({
                 action: 'DOWNLOAD_SLACK_FILE',
                 url: url,
-                filename: `${config.downloadDirectory || 'slack-exports'}/files/${safeName}`
+                filename: `${config.downloadDirectory || 'slack-exports'}/${generateFilename(channel.name).replace(/\.md$/, '')}/${safeName}`
               });
               await sleep(300); // small delay to avoid hammering the CDN
             }

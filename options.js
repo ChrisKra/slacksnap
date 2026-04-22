@@ -148,6 +148,15 @@ resetChannelsBtn.addEventListener('click', async () => {
 });
 
 /**
+ * Quickly set time intervals for export
+ */
+document.querySelectorAll('.quick-days-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.getElementById('historyDays').value = btn.dataset.days;
+    });
+});
+
+/**
  * Add a single channel via the form
  */
 addChannelBtn.addEventListener('click', async () => {

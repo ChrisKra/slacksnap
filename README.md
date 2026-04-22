@@ -2,6 +2,8 @@
 
 A Chrome extension that exports Slack messages to markdown files. Does what it says on the tin, really. Wrote a blog post about it [here](https://curlewis.co.nz/2025/08/05/i-built-another-thing-extract-slack/).
 
+Forked from [dcurlewis/slacksnap](https://github.com/dcurlewis/slacksnap). This fork fixes some bugs, adds file and image downloading, and shows per-channel thread fetch progress during batch exports.
+
 I built this because I got tired of copy-pasting Slack conversations when I wanted to analyse them with Claude or other tools. If you're going to export chat data, you might as well do it properly.
 
 ## What it actually does
@@ -41,7 +43,7 @@ The extension needs permissions for Slack domains, local storage (for your setti
 2. Click the SlackSnap icon — a popup opens showing your configured channels grouped by tier
 3. Tick the channels you want (or use the tier-level "select all" toggles)
 4. Click **Export Selected** and watch the progress bar
-5. Find your markdown files in `Downloads/slack-exports/` by default
+5. Find your markdown files in `Downloads/slack-exports/` by default, with any attached files and images saved in a subfolder per channel
 
 The extension exports channels sequentially with a short delay between each to respect Slack's rate limits. If one channel fails, it continues with the rest. Each channel produces its own markdown file, and you can optionally tick "Combined file" to get a single merged export as well.
 
