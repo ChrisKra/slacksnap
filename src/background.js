@@ -100,6 +100,27 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Return true to indicate we'll respond asynchronously
     return true;
   }
+
+  if (message.action === 'DOWNLOAD_SLACK_FILE') {
+    chrome.downloads.download(
+      {
+        url: message.url,
+        filename: message.filename,
+        conflictAction: 'uniquify',
+        saveAs: false
+      },
+      (downloadId) => {
+        if (chrome.runtime.lastError) {
+          console.warn('❌ Slack file download failed:', chrome.runtime.lastError.message, message.url);
+          sendResponse({ success: false, error: chrome.runtime.lastError.message });
+        } else {
+          console.log('✅ Slack file download started, id:', downloadId, message.filename);
+          sendResponse({ success: true, downloadId });
+        }
+      }
+    );
+    return true; // keep channel open for async sendResponse
+  }
   
   if (message.action === 'CONTENT_SCRIPT_READY') {
     console.log('✅ Content script ready on tab:', sender.tab?.id);

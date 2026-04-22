@@ -879,7 +879,13 @@ async function exportChannelViaAPI(channelId, channelName, oldestTimestamp = nul
   const markdown = convertToMarkdown(messages, channelName, config);
   console.log(`✅ Processed ${messages.length} messages for ${channelName}`);
 
-  return { messageCount: messages.length, markdown, channelName };
+  const allFileUrls = enrichedMessages.flatMap(m => [
+    ...(m.fileUrls || []),
+    ...m.threadReplies.flatMap(r => r.fileUrls || [])
+  ]);
+  console.log("allFileUrls: ", allFileUrls)
+
+  return { messageCount: messages.length, markdown, channelName, fileUrls: allFileUrls };
 }
 
 /**

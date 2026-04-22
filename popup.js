@@ -247,9 +247,9 @@ async function exportSelected() {
         action: 'BATCH_EXPORT_CHANNEL',
         channelId: channel.channelId,
         channelName: channel.name,
-		// Always load all messages, not only new
+		    // Always load all messages, not only new
         //oldestTimestamp: lastExportTimestamps[channel.channelId] || null 
-		oldestTimestamp: null
+		    oldestTimestamp: null
       });
 
       if (response && response.success) {
@@ -263,6 +263,21 @@ async function exportSelected() {
               directory: config.downloadDirectory || 'slack-exports'
             }
           });
+
+          if (config.includeFiles && response.fileUrls && response.fileUrls.length > 0) {
+            for (const url of response.fileUrls) {
+              const urlParts = url.split('/');
+              const rawName = urlParts[urlParts.length - 1].split('?')[0];
+              const safeName = rawName.replace(/[<>:"/\\|?*]/g, '_') || 'file';
+              console.log("Requested download: ", url)
+              await chrome.runtime.sendMessage({
+                action: 'DOWNLOAD_SLACK_FILE',
+                url: url,
+                filename: `${config.downloadDirectory || 'slack-exports'}/files/${safeName}`
+              });
+              await sleep(300); // small delay to avoid hammering the CDN
+            }
+          }
 
           // Accumulate for combined file
           if (combinedExportCb.checked) {
