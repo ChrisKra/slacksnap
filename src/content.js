@@ -807,8 +807,13 @@ async function exportChannelViaAPI(channelId, channelName, oldestTimestamp = nul
       }
       threadFetchCount++;
 
-      console.log("fetched: ", threadFetchCount, "total: ", totalThreadCount)
-      
+      // Send progress update to popup
+      chrome.runtime.sendMessage({
+        action: 'CHANNEL_PROGRESS',
+        fetched: threadFetchCount,
+        total: totalThreadCount
+      }).catch(() => {}); // ignore if popup is closed
+
       const repliesRaw = await fetchThreadReplies(channelId, msg.thread_ts, oldestUnix, token);
       threadRepliesCache.set(msg.thread_ts, repliesRaw);
       for (const reply of repliesRaw) {

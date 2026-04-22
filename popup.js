@@ -87,6 +87,13 @@ combinedExportCb.addEventListener('change', async () => {
 
 quickAddBtn.addEventListener('click', quickAddCurrentChannel);
 
+// Listen for per-channel thread progress from content script
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.action === 'CHANNEL_PROGRESS') {
+    progressText.textContent = `${progressText.textContent.split('—')[0].trim()} — threads ${message.fetched}/${message.total}`;
+  }
+});
+
 // ── Render ─────────────────────────────────────────────────────────
 
 function renderChannels() {
