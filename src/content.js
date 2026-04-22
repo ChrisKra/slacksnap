@@ -599,22 +599,20 @@ function convertToMarkdown(messages, channelName, config) {
 	// ✅ Add file URLs (if any) right after the corresponding message content
 	if (config.includeFiles && Array.isArray(message.fileUrls) && message.fileUrls.length > 0) {
 	for (const url of message.fileUrls) {
-			markdown += `**File URL:** ${url}\n\n`;
-
       // Generate Filename
       const urlParts = url.split('/');
       const rawName = urlParts[urlParts.length - 1].split('?')[0];
       const prefix = urlParts[urlParts.length - 2].split('-')[1];
       const safeName = prefix + "_" + rawName.replace(/[<>:"/\\|?*]/g, '_') || 'file';
 
+      //Generate Directory Name
       const now = new Date();
       const dateStr = formatDate(now, 'YYYYMMDD-HHmm');
       const cleanChannel = channelName.replace(/[^a-zA-Z0-9-_]/g, '-');
-      
-      const fileName = config.fileNameFormat.replace('YYYYMMDD-HHmm', dateStr).replace('{channel}', cleanChannel);
+      const dirName = config.fileNameFormat.replace('YYYYMMDD-HHmm', dateStr).replace('{channel}', cleanChannel);
 
-      markdown += `(![${safeName}](./${fileName.replace(/\.md$/, '')}/${safeName}))`;
-
+      markdown += `![${safeName}](./${dirName.replace(/\.md$/, '')}/${safeName})\n`;
+      markdown += `**File URL:** ${url}\n\n`;
 		}
 	}
 
@@ -632,6 +630,20 @@ function convertToMarkdown(messages, channelName, config) {
 		if (config.includeFiles && Array.isArray(reply.fileUrls) && reply.fileUrls.length > 0) {
 		  for (const url of reply.fileUrls) {
 			markdown += `  • **File URL:** ${url}\n`;
+        // Generate Filename
+        const urlParts = url.split('/');
+        const rawName = urlParts[urlParts.length - 1].split('?')[0];
+        const prefix = urlParts[urlParts.length - 2].split('-')[1];
+        const safeName = prefix + "_" + rawName.replace(/[<>:"/\\|?*]/g, '_') || 'file';
+
+        //Generate Directory Name
+        const now = new Date();
+        const dateStr = formatDate(now, 'YYYYMMDD-HHmm');
+        const cleanChannel = channelName.replace(/[^a-zA-Z0-9-_]/g, '-');
+        const dirName = config.fileNameFormat.replace('YYYYMMDD-HHmm', dateStr).replace('{channel}', cleanChannel);
+
+        markdown += `    ![${safeName}](./${dirName.replace(/\.md$/, '')}/${safeName})\n`;
+        markdown += `  • **File URL:** ${url}\n\n`;
 		  }
 		}
       }
