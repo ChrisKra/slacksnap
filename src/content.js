@@ -611,7 +611,7 @@ function convertToMarkdown(messages, channelName, config) {
       const cleanChannel = channelName.replace(/[^a-zA-Z0-9-_]/g, '-');
       const dirName = config.fileNameFormat.replace('YYYYMMDD-HHmm', dateStr).replace('{channel}', cleanChannel);
 
-      markdown += `![${safeName}](./${dirName.replace(/\.md$/, '')}/${safeName})\n`;
+      markdown += `![${safeName}](./${dirName.replace(/\.md$/, '')}/${safeName})  \n`;
       markdown += `**Slack File URL:** ${url}\n\n`;
 		}
 	}
@@ -641,7 +641,7 @@ function convertToMarkdown(messages, channelName, config) {
         const cleanChannel = channelName.replace(/[^a-zA-Z0-9-_]/g, '-');
         const dirName = config.fileNameFormat.replace('YYYYMMDD-HHmm', dateStr).replace('{channel}', cleanChannel);
 
-        markdown += `    ![${safeName}](./${dirName.replace(/\.md$/, '')}/${safeName})\n`;
+        markdown += `    ![${safeName}](./${dirName.replace(/\.md$/, '')}/${safeName})  \n`;
         markdown += `  • **Slack File URL:** ${url}  \n`;
 		  }
 		}
