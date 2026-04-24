@@ -619,13 +619,13 @@ function convertToMarkdown(messages, channelName, config) {
     
     // Add thread replies if enabled
     if (config.includeThreadReplies && message.threadReplies.length > 0) {
-      markdown += `**Thread Replies:**\n`;
+      markdown += `**Thread Replies:**  \n`;
       for (const reply of message.threadReplies) {
         if (reply.sender) {
           markdown += `  • **${window.SlackSnapUtils.escapeMarkdown(reply.sender)}**: `;
         }
         if (reply.content) {
-          markdown += `${reply.content}\n`;
+          markdown += `${reply.content}  \n`;
         }
 		if (config.includeFiles && Array.isArray(reply.fileUrls) && reply.fileUrls.length > 0) {
 		  for (const url of reply.fileUrls) {
@@ -642,7 +642,7 @@ function convertToMarkdown(messages, channelName, config) {
         const dirName = config.fileNameFormat.replace('YYYYMMDD-HHmm', dateStr).replace('{channel}', cleanChannel);
 
         markdown += `    ![${safeName}](./${dirName.replace(/\.md$/, '')}/${safeName})\n`;
-        markdown += `  • **Slack File URL:** ${url}\n\n`;
+        markdown += `  • **Slack File URL:** ${url}  \n`;
 		  }
 		}
       }
